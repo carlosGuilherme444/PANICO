@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P.A.N.I.C.O.</title>
+<style>
+body{margin:0;background:#08111f;color:#8ff;font-family:Consolas,monospace}
+.wrap{max-width:900px;margin:40px auto;padding:24px;background:#101828;border:1px solid #0ff;border-radius:16px;box-shadow:0 0 30px #0ff4}
+h1{text-align:center;color:#0ff}
+textarea,input{width:100%;box-sizing:border-box;margin:8px 0;padding:10px;background:#061018;color:#dff;border:1px solid #0ff;border-radius:8px}
+button{margin:4px;padding:10px 16px;background:#0ff2;color:#dff;border:1px solid #0ff;border-radius:8px;cursor:pointer}
+.info{font-size:.95em;color:#bff}
+footer{margin-top:28px;border-top:1px solid #0ff5;padding-top:18px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>P.A.N.I.C.O.</h1>
+<p>Protocolo Aleatório Não Intuitivo de Codificação Obscura</p>
+<textarea id="t" rows="8" placeholder="Digite o texto"></textarea>
+<label><b>Chave numérica</b></label>
+<p class="info">A chave (ex.: 17) é somada ao código Unicode de cada caractere na criptografia e subtraída na descriptografia. Use a mesma chave nos dois processos.</p>
+<input id="k" type="number" value="17">
+<div>
+<button onclick="enc()">Criptografar</button>
+<button onclick="dec()">Decriptografar</button>
+<button onclick="navigator.clipboard.writeText(t.value)">Copiar</button>
+</div>
+<footer>
+<h2>Como funciona</h2>
+<ol>
+<li>Inverte cada palavra.</li>
+<li>Troca vogais por emojis.</li>
+<li>Adiciona símbolos após consoantes.</li>
+<li>Inverte a ordem das palavras.</li>
+<li>Aplica o deslocamento definido pela chave numérica.</li>
+<li>Na descriptografia, todas as etapas são desfeitas na ordem inversa.</li>
+</ol>
+</footer>
+</div>
+<script>
+const ve={a:"🍎",e:"🥚",i:"🧊",o:"🟠",u:"☂️"},vd={};for(const x in ve)vd[ve[x]]=x;
+const sy=["?","!","%","&","+","*","@","#","$"];
+const sh=(s,n)=>[...s].map(c=>String.fromCodePoint(c.codePointAt(0)+n)).join("");
+const ush=(s,n)=>[...s].map(c=>String.fromCodePoint(c.codePointAt(0)-n)).join("");
+function enc(){
+ let x=t.value;
+ x=x.split(/\s+/).map(w=>[...w].reverse().join("")).join(" ");
+ x=[...x].map(ch=>ve[ch]??(/[bcdfghjklmnpqrstvwxyz]/i.test(ch)?ch+sy[ch.charCodeAt(0)%sy.length]:ch)).join("");
+ x=x.split(" ").reverse().join(" ");
+ t.value=sh(x,parseInt(k.value)||0);
+}
+function dec(){
+ let x=ush(t.value,parseInt(k.value)||0);
+ x=x.split(" ").reverse().join(" ");
+ x=x.replace(/([bcdfghjklmnpqrstvwxyz])[?!%&+*@#$]/gi,"$1");
+ for(const e in vd)x=x.split(e).join(vd[e]);
+ x=x.split(/\s+/).map(w=>[...w].reverse().join("")).join(" ");
+ t.value=x;
+}
+</script>
+</body></html>
